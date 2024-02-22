@@ -1,29 +1,33 @@
 const http = require('http');
 const express = require('express');
 const app = express()
+const cookieParser = require('cookie-parser')
 const server = http.createServer(app)
 const io = require('socket.io')(server)
 // const {Server} = require('socket.io');
 // const io = new Server(server);
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: false}))
 app.use(express.static('public'))
-app.set('view engine','ejs');
+app.set('view engine','ejs')
 app.set('views','./views')
+app.use(cookieParser())
 
-app.get('/',(req,res)=>{
-    res.render('index')
-})
+const connectToMongoDb = require('./connect')
+connectToMongoDb('mongodb://127.0.0.1:27017/chat-app')
 
-io.on("connection", (socket)=>{
-    console.log("a user has connected",socket.id);
-    socket.on("disconnect",()=>{
-        console.log(`user disconnected`);
-    })
+const {checkAuth}  = require('./middleware/checkAuth')
+app.use(checkAuth)
 
-    socket.on("message",(msg)=>{
-        io.emit('message',msg);
-    })
-})
+const userRoute = require('./routes/userRoute');
+app.use('/api/user',userRoute)
+
+const staticRoute = require('./routes/staticRoute')
+app.use('/',staticRoute);
+
+const chatSocket = require('./sockets/chatSocket');
+chatSocket(io);
 
 server.listen(3000,()=>{
     console.log("running on port 3000");
