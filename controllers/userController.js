@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const uniqid = require('uniqid')
 
 async function getAllUsers(req,res){
     try {
@@ -12,26 +13,47 @@ async function getAllUsers(req,res){
         res.json({ error: error.message})
     }
 }
-async function createNewUser(req,res){
+async function handleUserLogout(req,res){
     try {
-        console.log(req.body);
-        const user = req.body;
-        const email = user.email;
-        const userExists = await User.findOne({email})
-        if(userExists){
-            return res.json({message: 'user already exists'})
-        }
-        const newUser = new User(user);
-        newUser.userId='xyz';
-        await newUser.save()
-        return res.json({message: 'new user has been created'})
+        res.clearCookie('token').redirect('/user/login')
+        
     } 
     catch (error) {
-        res.json({ error: error.message})
+        console.log("error occurred while logging out");
+        res.json({message: error.message})
     }
+}
+function chatWithUser(req,res){
+
+    const currUser = req.user[0].userId;
+    const otherUser = req.params.userId;
+
+    res.json({
+        currUser:currUser,
+        otherUser:otherUser,
+    })   
+}
+async function getOtherUser(req,res){
+    
+        if(!req.user){
+            return res.redirect('/user/login')
+        }
+        const otherUserId = req.params.userId;
+        
+        const otherUser =  await User.findOne({userId: otherUserId})
+        
+        console.log(otherUser.name);
+
+        res.render('chat',{
+            currUserName:req.user[0].name,
+            otherUserName: otherUser.name,
+        })
+    
 }
 
 module.exports ={
     getAllUsers,
-    createNewUser,
+    handleUserLogout,
+    chatWithUser,
+    getOtherUser
 }

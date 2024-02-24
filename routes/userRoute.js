@@ -1,16 +1,20 @@
 const express = require('express');
 const router = express.Router()
+const { 
+    handleUserLogin, 
+    handleUserSignup
+} = require('../controllers/authController');
 const {
     getAllUsers,
-    createNewUser
-} 
-= require('../controllers/userController');
-const { handleUserLogin, handleUserSignup } = require('../controllers/authController');
+    handleUserLogout,
+    chatWithUser
+}= require('../controllers/userController');
 
 router.get('/',getAllUsers);
-router.post('/',createNewUser);
 router.post('/signup',handleUserSignup)
 router.post('/login',handleUserLogin)
-// router.get('/:userId',getUser)
+
+router.get('/logout',handleUserLogout)
+router.get('/:userId',chatWithUser)
 
 module.exports = router;

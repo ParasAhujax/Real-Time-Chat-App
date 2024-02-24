@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Real Time Chat App</h1>
+    <br>
+    <h2>Hey <%=currUserName%></h2>
+    <h3>chatting with <%=otherUserName%> </h3>
+    <br>
+    <input type="text" id="chatinput" placeholder="enter text to send">
+    <button id="sendbtn">Send</button>
+
+    <div id="chats"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const path = window.location.pathname;
+        fetch('/api'+path,{
+            method:'GET',
+        })
+        .then(response=>{
+            return response.json();
+        })
+        .then(response=>{
+            const currUserId = response.currUser
+            const otherUserId = response.otherUser
+
+            var socket = io();
+            socket.emit('curr-user',currUserId,otherUserId);
+
+            const chat = document.getElementById("chatinput");
+            const button = document.getElementById("sendbtn");
+            
+            button.addEventListener("click",function(){
+                if(chat.value){
+                    socket.emit('p-msg',currUserId,otherUserId,chat.value)
+                    chat.value = '';
+                }
+            })
+
+            socket.on("message",(recieverUserId,senderUserId,msg)=>{   
+                if(senderUserId == otherUserId || senderUserId==currUserId){
+                    var chats = document.getElementById("chats");
+                    var chat = document.createElement("li");
+                    chat.textContent = msg;
+                    chats.appendChild(chat);
+                }         
+            })
+        })
+        .catch(err=>{
+            alert(err.message);
+        })
+    </script>
+</body>
+</html>

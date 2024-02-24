@@ -6,34 +6,40 @@
     <title>Chat App</title>
 </head>
 <body>
-    Real Time Chat App
+    <h3>Hey <%=name %></h3>
+    <button id="userBtn1">Mike</button>
+    <button id="userBtn2">John</button>
+    <button id="userBtn3">Tony</button>
     <br>
-    <button>user1</button>
-    <br>
-    <input type="text" id="chatinput" placeholder="enter text to send">
-    <button id="sendbtn">Send</button>
+    <button id="logoutBtn">Sign Out</button>
+</body>
+<script>
 
-    <div id="chats"></div>
+    const userBtn1 = document.getElementById("userBtn1");
+    const userBtn2 = document.getElementById("userBtn2");
+    const userBtn3 = document.getElementById("userBtn3");
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        var socket = io();
+    const logOutBtn = document.getElementById("logoutBtn");
 
-        const input = document.getElementById("chatinput");
-        const button = document.getElementById("sendbtn");
+    userBtn1.addEventListener("click",()=>{      
+        window.location.href = `/user/d601bt8lsxifng9`
+    })
+    userBtn2.addEventListener("click",()=>{
+        window.location.href = `/user/d6019nglsxiq3ei`
+    })
+    userBtn3.addEventListener("click",()=>{
+        window.location.href = `/user/d601rd4lsxtchn1`
+    })
 
-        button.addEventListener("click",function(){
-            if(input.value){
-                socket.emit('sendMessage',input.value);
-                input.value = '';
+    logOutBtn.addEventListener("click",()=>{
+        fetch('api/user/logout',{
+            method: 'GET',  //not necessary to specify
+        })
+        .then(response => {
+            if(response.redirected) {
+                window.location.href = response.url
             }
         })
-        socket.on("message",(msg)=>{
-            var chats = document.getElementById("chats")
-            var chat = document.createElement("li");
-            chat.textContent = msg;
-            chats.appendChild(chat);
-        })
-    </script>
-</body>
+    })
+</script>
 </html>

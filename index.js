@@ -1,7 +1,6 @@
 const http = require('http');
 const express = require('express');
 const app = express()
-const cookieParser = require('cookie-parser')
 const server = http.createServer(app)
 const io = require('socket.io')(server)
 // const {Server} = require('socket.io');
@@ -12,6 +11,8 @@ app.use(express.urlencoded({ extended: false}))
 app.use(express.static('public'))
 app.set('view engine','ejs')
 app.set('views','./views')
+
+const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
 const connectToMongoDb = require('./connect')
