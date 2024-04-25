@@ -8,7 +8,7 @@ router.get('/',(req,res)=>{
         return res.redirect('/user/login')
     }
     res.render('home',{
-        name: req.user[0].name,
+        name: req.user.name,
     })
 })
 router.get('/user/login',(req,res)=>{

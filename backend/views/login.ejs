@@ -6,37 +6,33 @@
     <title>Login</title>
 </head>
 <body>
-    <form id="signupForm" action="/api/user/signup">
-        <input type="name" name="name" placeholder="enter name">
+    <form id="loginForm" action="/api/user/login">
         <input type="text" name="email" placeholder="enter email">
         <input type="password" name="password" placeholder="enter password">
-        <button>Signup</button>
+        <button>Login</button>
+        
     </form>
+    <button id="signupbtn">Signup</button>
 
     <script>
-        const form = document.getElementById("signupForm");
-        const button = document.querySelector("#signupForm button")
+        const form = document.getElementById("loginForm");
+        const button = document.querySelector("#loginForm button")
         form.addEventListener("submit",(event)=>{
             event.preventDefault();
 
             const formData = new FormData(form);
 
-            fetch('/api/user/signup',{
+            fetch('/api/user/login',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    name:formData.get('name'),
                     email: formData.get('email'),
                     password: formData.get('password')
                 })
             })
             .then(response => {
-                console.log(response);
-                if(response.status === 400){
-                    alert("User Already Exists")
-                }
                 if(response.status === 500){
                     alert("Internal Server Error, please try again later")
                 }
@@ -44,7 +40,11 @@
                     window.location.href = response.url
                 }
             })
-
+        })
+        
+        const signupbtn = document.getElementById("signupbtn")
+        signupbtn.addEventListener("click",()=>{
+            window.location.href = '/user/signup'
         })
     </script>
 </body>

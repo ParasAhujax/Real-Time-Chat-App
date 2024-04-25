@@ -8,11 +8,9 @@ async function handleUserSignup(req,res){
 
         const existingUser = await User.findOne({email});
         if(existingUser){
-            res.status(400).json({message:"user already exists"});
+            return res.status(400).json({message:"user already exists"});
         }
-
         const userId = uniqid();
-        console.log(userId);
 
         await User.create({
             name,
@@ -20,11 +18,10 @@ async function handleUserSignup(req,res){
             password,
             userId
         })
-        res.status(201).redirect('/user/login')
+        return res.status(201).redirect('/user/login')
     }
     catch(err){
-        console.log(err)
-        res.status(500).redirect('/user/signup');
+        return res.status(500).redirect('/user/signup');
     }
 }
 async function handleUserLogin(req,res){
@@ -33,7 +30,6 @@ async function handleUserLogin(req,res){
         const user = await User.findOne({email:email,password:password})
         
         if(!user) {
-            console.log("error occurred");
             return res.redirect('/signup?error=User%not%20found')
         }
         req.user = user;
@@ -49,8 +45,16 @@ async function handleUserLogin(req,res){
         return res.status(500).redirect('/user/login')
     }
 }
-
+async function handleUserLogout(req,res){
+    try {
+        res.clearCookie('token').redirect('/user/login')
+    } 
+    catch (error) {
+        res.json({message: error.message})
+    }
+}
 module.exports = {
     handleUserLogin,
-    handleUserSignup
+    handleUserSignup,
+    handleUserLogout
 }

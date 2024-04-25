@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    userId:{
+    userId:{ 
         type:String,
         required:true,
         unique:true
@@ -22,9 +22,10 @@ const userSchema = new mongoose.Schema({
     friends:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'users'
-    }]
+    }],
+    
 },{timestamps:true})
 
-const message = mongoose.model('users',userSchema)
+const User = mongoose.model('users',userSchema)
 
-module.exports = message;
+module.exports = User;

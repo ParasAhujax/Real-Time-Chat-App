@@ -18,7 +18,6 @@ function chatSocket (io){
             socket.on('p-msg', (currUserId,otherUserId, message) => {
                 const currSocketId = activeUsers.get(currUserId)
                 const otherSocketId= activeUsers.get(otherUserId)
-                console.log("sent by",currUserId);
                 io.to(otherSocketId).to(currSocketId).emit('message',otherUserId,currUserId,message);
             });
         })        

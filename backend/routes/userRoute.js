@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router()
 const { 
     handleUserLogin, 
-    handleUserSignup
+    handleUserSignup,
+    handleUserLogout,
 } = require('../controllers/authController');
 const {
     getAllUsers,
-    handleUserLogout,
     chatWithUser
 }= require('../controllers/userController');
 

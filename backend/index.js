@@ -16,9 +16,9 @@ const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
 const connectToMongoDb = require('./connect')
-connectToMongoDb('mongodb://127.0.0.1:27017/chat-app')
+connectToMongoDb('mongodb://127.0.0.1:27017/swiftchat')
 
-const {checkAuth}  = require('./middleware/checkAuth')
+const {checkAuth}  = require('./middleware/authMiddleware')
 app.use(checkAuth)
 
 const userRoute = require('./routes/userRoute');
