@@ -6,6 +6,9 @@ export default {
     fontFamily:{
       'futura':['futura'],
       'helvetica':['helvetica'],
+      'geddes':['geddes'],
+      'fax':['fax'],
+      'louis':['louis'],
     }
   },
   plugins: [],

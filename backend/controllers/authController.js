@@ -1,58 +1,98 @@
+const User = require('../model/user')
 const jwt = require('jsonwebtoken');
-const User = require('../models/user')
-const uniqid = require('uniqid')
+const bcrypt = require('bcrypt');
+require('dotenv').config();
 
 async function handleUserSignup(req,res){
-    try{
+    try {
         const {name,email,password} = req.body;
+        
+        if(!name || !email || !password) return res.status(302).json({message:'all fields are required'})
+        
+        const userExists = await User.findOne({email:email});
+        if(userExists) return res.status(400).json({message:'user already exists'});
 
-        const existingUser = await User.findOne({email});
-        if(existingUser){
-            return res.status(400).json({message:"user already exists"});
-        }
-        const userId = uniqid();
-
-        await User.create({
-            name,
-            email,
-            password,
-            userId
+        const encryptedPassword = await bcrypt.hash(password,10);
+        
+        const user = await User.create({
+            name:name,
+            email:email,
+            password:encryptedPassword,
         })
-        return res.status(201).redirect('/user/login')
-    }
-    catch(err){
-        return res.status(500).redirect('/user/signup');
+
+        if (!user) {
+            return res.status(500).json({ message: 'Failed to create user' });
+        }
+        delete user.password;
+        req.user = user;
+
+        const token = jwt.sign(
+            {email:user.email},
+            process.env.JWT_SECRET,{
+                expiresIn:'1h'
+            }
+        )
+        if(!token) return res.status(500).json({"error":"token could not be generated"})
+        res.cookie('token',token,{
+            // secure:true,
+            // httpOnly:true,
+            // sameSite:'None'
+        })
+        return res.status(200).json({message:'user created successfully'});
+    
+    } 
+    catch (error) {
+        return res.status(500).json({error: error});
     }
 }
 async function handleUserLogin(req,res){
     try {
         const {email,password} = req.body;
-        const user = await User.findOne({email:email,password:password})
-        
-        if(!user) {
-            return res.redirect('/signup?error=User%not%20found')
-        }
-        req.user = user;
+        const user = await User.findOne({email: email});
 
-        const token = jwt.sign(
-            {email: user.email},
-            'secret'
-        )
-        
-        return res.status(201).cookie('token',token).redirect('/');
+        if(!user) return res.status(401).json({ message : "user not found" });
+
+        delete user.password;
+        bcrypt.compare(password, user.password, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            if (result) {
+                req.user = user;
+
+                const token = jwt.sign(
+                    {email:user.email},
+                    process.env.JWT_SECRET,{
+                        // expiresIn:'1h'
+                    }
+                )
+                if(!token) return res.status(500).json({"error":"token could not be generated"})
+                
+                res.cookie('token',token,{
+                    // secure:true,
+                    // sameSite:'None',
+                    // httpOnly:true,
+                })
+                return res.status(200).json({ message: 'Login successful' });
+            } 
+            else {
+                return res.status(401).json({ message: 'Incorrect password' });
+            }
+        });
     } 
     catch (error) {
-        return res.status(500).redirect('/user/login')
-    }
+        return res.status(error.status).redirect('/login');
+    }    
 }
-async function handleUserLogout(req,res){
+async function handleUserLogout(req, res) {
     try {
-        res.clearCookie('token').redirect('/user/login')
+        return res.clearCookie('token').json('logout successful');
     } 
     catch (error) {
-        res.json({message: error.message})
+        res.json({error: error.message});
     }
 }
+
 module.exports = {
     handleUserLogin,
     handleUserSignup,

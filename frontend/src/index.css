@@ -2,18 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: "fax";
+    src: url("../src/assets/fax-sans.beta.otf");
+}
+@font-face {
+    font-family: "geddes";
+    src: url("../src/assets/Geddes\ Bold.otf");
+}
+@font-face {
+    font-family: "louis";
+    src: url("../src/assets/louis-george-cafe.bold.ttf");
+}
 *{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Gilroy';
+    margin: 0;
+    padding: 0;
+    /* border-radius: 10px; */
+    background-color: #fff;
+    box-sizing: border-box;
+    font-family: 'Gilroy';
 }
 *::selection{
-  color: #fff;
-  background-color: #050505;
+    color: #fff;
+    background-color: #050505;
 }
 html,body{
-  height: 100%;
-  width: 100%;
-  background-color: rgb(255, 255, 255);
+    /* padding: 2px; */
+    height: 100%;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+}
+
+.lexend-custom {
+  font-family: "Lexend", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }

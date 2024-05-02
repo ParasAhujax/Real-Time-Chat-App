@@ -33,11 +33,12 @@
                 })
             })
             .then(response => {
+                console.log(response);
                 if(response.status === 500){
                     alert("Internal Server Error, please try again later")
                 }
-                if(response.redirected){
-                    window.location.href = response.url
+                if(response.status === 200){
+                    window.location.href = 'http://localhost:3001/'
                 }
             })
         })

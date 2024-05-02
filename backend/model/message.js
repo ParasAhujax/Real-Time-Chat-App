@@ -5,11 +5,13 @@ const messageSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'users'
     },
-    reciever:{
+    receiver:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'users'
     },
     message:String,
+    timestamp:Number
+    
 },{timestamps:true})
 
 const Message = mongoose.model('messages',messageSchema)

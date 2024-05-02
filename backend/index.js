@@ -2,9 +2,26 @@ const http = require('http');
 const express = require('express');
 const app = express()
 const server = http.createServer(app)
-const io = require('socket.io')(server)
-// const {Server} = require('socket.io');
-// const io = new Server(server);
+// const io = require('socket.io')(server)
+
+const cors = require('cors');
+app.use(cors({
+    origin: `http://localhost:5173`,
+    credentials:true
+}))
+
+const {Server} = require('socket.io');
+const io = new Server(server,{
+    cors:{
+        origin:`http://localhost:5173`,
+        credentials:true
+    }
+});
+
+
+
+const morgan = require('morgan');
+app.use(morgan('dev'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false}))
@@ -24,10 +41,13 @@ app.use(checkAuth)
 const userRoute = require('./routes/userRoute');
 app.use('/api/user',userRoute)
 
+const messageRoute = require('./routes/messageRoute');
+app.use('/api/message',messageRoute);
+
 const staticRoute = require('./routes/staticRoute')
 app.use('/',staticRoute);
 
-const chatSocket = require('./sockets/chatSocket');
+const chatSocket = require('./utils/chatSocket');
 chatSocket(io);
 
 server.listen(3000,()=>{
