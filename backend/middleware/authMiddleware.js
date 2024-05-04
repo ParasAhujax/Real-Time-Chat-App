@@ -20,7 +20,7 @@ async function checkAuth(req, res, next) {
                 res.clearCookie('token');
                 return res.status(401).json({ error: 'Token expired' });
             } else {
-                return res.status(500).json({ error: error.message });
+                return res.status(500).json({ error: error});
             }
         }
     }
@@ -28,7 +28,7 @@ async function checkAuth(req, res, next) {
 }
 async function isLoggedIn(req, res, next) {
     if(!req.user) {
-        return res.status(403).json({message:"unauthorized"});
+        return res.status(401).json({message:"unauthorized"});
     }
     next();
 }
@@ -47,7 +47,6 @@ async function isAdmin(req, res, next) {
         }
     }
     else{
-        console.log("middleware interfering");
         res.status(403).json({message:"unauthorized"});
     }
 

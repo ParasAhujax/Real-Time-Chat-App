@@ -8,8 +8,7 @@ async function getAllMessages(req,res){
         return res.status(200).json(messages);
     } 
     catch (error) {
-
-        
+        return res.status(error.status).json({ error: error });
     }
 }
 

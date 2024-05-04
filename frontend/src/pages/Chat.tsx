@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Message from '../components/Message'
-import axios, { AxiosResponse } from 'axios'
 import FriendSection from '../components/FriendSection'
 import ChatHeader from '../components/ChatHeader'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const Chat:React.FC = () => {
     const {id} = useParams();
+    const navigate =useNavigate();
+    const[activeUsers,setActiveUsers] = useState<string[]>();
 
-    useEffect(()=>{
-        
-    },[])
   return (
     <>
     <ChatHeader/>
     <div className='flex'>
-        <FriendSection id={id}/>
-        <Message/>
+        <FriendSection  activeUsers={activeUsers} setActiveUsers={setActiveUsers}/>
+        {id && (<Message activeUsers={activeUsers} setActiveUsers={setActiveUsers}/>)}
     </div>
     </>
   )

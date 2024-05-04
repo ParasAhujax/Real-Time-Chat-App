@@ -5,7 +5,7 @@ async function getAllUsers(req,res){
     try {
         const users = await User.find()
         if(!users){
-            return res.status(401).json({message: 'No users found'})
+            return res.status(404).json({message: 'No users found'})
         }
         return res.status(200).json(users)
     } 
@@ -21,7 +21,6 @@ function getCurrentUser(req,res) {
         res.status(200).json({ userId: userId, name: name, email: email });
     } 
     catch (error) {
-        console.log(error.message);
         res.status(error.status).json({ error: error.message });        
     }
 }
@@ -37,8 +36,23 @@ async function getUserById(req,res){
         return res.status(200).json({name:name, email:email,_id:_id});
     } 
     catch (error) {
-        console.log(error.message);
         return res.status(error.status).json({error:error});
+    }
+}
+async function searchUser(req, res){
+    try {
+        const {search} = req.query;
+        if(!search) return res.status(404).json({error:"invalid search"})
+        const searchExp = new RegExp(search,'i')
+
+        const users = await User.find({
+            $or:[{email:searchExp},{name:searchExp}]
+        })    
+        if(users.length===0) return res.status(404).json({message:"no users found"});
+        return res.status(200).json(users)
+    } 
+    catch (error) {
+        return res.status(error.status).json({error: error});        
     }
 }
 async function getUserFriends(req, res) {
@@ -50,7 +64,6 @@ async function getUserFriends(req, res) {
             const friendDetail = await User.findById(friend._id);
             return {
                 name: friendDetail.name,
-
             }
         })
 
@@ -64,5 +77,6 @@ async function getUserFriends(req, res) {
 module.exports ={
     getAllUsers,
     getCurrentUser,
-    getUserById
+    getUserById,
+    searchUser
 }

@@ -39,3 +39,13 @@ html,body{
   font-weight: 700;
   font-style: normal;
 }
+::-webkit-scrollbar {
+    width: 10px;
+}  
+::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+background: #afafaf;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #6b6b6b;
+}

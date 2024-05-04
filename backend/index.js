@@ -18,8 +18,6 @@ const io = new Server(server,{
     }
 });
 
-
-
 const morgan = require('morgan');
 app.use(morgan('dev'))
 
@@ -43,9 +41,6 @@ app.use('/api/user',userRoute)
 
 const messageRoute = require('./routes/messageRoute');
 app.use('/api/message',messageRoute);
-
-const staticRoute = require('./routes/staticRoute')
-app.use('/',staticRoute);
 
 const chatSocket = require('./utils/chatSocket');
 chatSocket(io);

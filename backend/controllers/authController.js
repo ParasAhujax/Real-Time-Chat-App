@@ -34,15 +34,15 @@ async function handleUserSignup(req,res){
         )
         if(!token) return res.status(500).json({"error":"token could not be generated"})
         res.cookie('token',token,{
-            // secure:true,
-            // httpOnly:true,
-            // sameSite:'None'
+            secure:true,
+            httpOnly:true,
+            sameSite:'None'
         })
         return res.status(200).json({message:'user created successfully'});
     
     } 
     catch (error) {
-        return res.status(500).json({error: error});
+        return res.status(error.status).json({error: error});        
     }
 }
 async function handleUserLogin(req,res){
@@ -50,7 +50,7 @@ async function handleUserLogin(req,res){
         const {email,password} = req.body;
         const user = await User.findOne({email: email});
 
-        if(!user) return res.status(401).json({ message : "user not found" });
+        if(!user) return res.status(404).json({ message : "user not found" });
 
         delete user.password;
         bcrypt.compare(password, user.password, (err, result) => {
@@ -63,15 +63,15 @@ async function handleUserLogin(req,res){
                 const token = jwt.sign(
                     {email:user.email},
                     process.env.JWT_SECRET,{
-                        // expiresIn:'1h'
+                        expiresIn:'1h'
                     }
                 )
                 if(!token) return res.status(500).json({"error":"token could not be generated"})
                 
                 res.cookie('token',token,{
-                    // secure:true,
-                    // sameSite:'None',
-                    // httpOnly:true,
+                    secure:true,
+                    sameSite:'None',
+                    httpOnly:true,
                 })
                 return res.status(200).json({ message: 'Login successful' });
             } 
@@ -81,15 +81,15 @@ async function handleUserLogin(req,res){
         });
     } 
     catch (error) {
-        return res.status(error.status).redirect('/login');
+        return res.status(error.status).json({error: error});        
     }    
 }
 async function handleUserLogout(req, res) {
     try {
-        return res.clearCookie('token').json('logout successful');
+        return res.status(200).clearCookie('token').json({message:'logout successful'});
     } 
     catch (error) {
-        res.json({error: error.message});
+        res.status(error.status).json({error: error});
     }
 }
 
