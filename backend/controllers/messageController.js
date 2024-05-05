@@ -49,9 +49,35 @@ async function getUserMessages(req, res) {
         return res.status(error.status).json({error:error})
     }
 }
+async function getFriendsMessage(req,res){
+    try {
+        const {friends,user} = req.body;
+
+        const messages = await Promise.all(friends.map(async(friend)=>{
+            const message = await Message.find(
+                {$or:[{sender:friend._id,receiver:user._id},{sender:user._id,receiver:friend._id}]}
+            )
+            .sort({timestamp:-1}).limit(1)
+
+            if(message.length===0) return;
+
+            return {
+                friend:friend._id,
+                message:message[0].message,
+                timestamp:message[0].timestamp
+            }
+        }))
+
+        res.status(200).json({messages});
+    } 
+    catch (error) {
+        res.status(500).json({error: error.message});
+    }
+}
 
 module.exports ={
     getUserMessages,
     getAllMessages,
-    storeMessage
+    storeMessage,
+    getFriendsMessage
 }

@@ -15,10 +15,10 @@ async function getAllUsers(req,res){
 }
 function getCurrentUser(req,res) {
     try {
-        const userId = req.user._id;
+        const _id = req.user._id;
         const name = req.user.name;
         const email = req.user.email;
-        res.status(200).json({ userId: userId, name: name, email: email });
+        res.status(200).json({ _id: _id, name: name, email: email });
     } 
     catch (error) {
         res.status(error.status).json({ error: error.message });        
@@ -27,7 +27,6 @@ function getCurrentUser(req,res) {
 async function getUserById(req,res){
     try {
         const {_id} = req.params;
-        console.log(_id);
         const user = await User.findById(_id);
         if(!user) return res.status(404).json({ error:"user not found" });
 

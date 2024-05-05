@@ -12,20 +12,18 @@ export interface User{
     email: string
 }
 
-const ChatHeader:React.FC = () => {
-    const[user,setUser] = useState<User>()
+export interface CurrentUser{
+    user?:User,
+    setUser?:React.Dispatch<React.SetStateAction<User | undefined>>
+}
+
+const ChatHeader:React.FC<CurrentUser> = ({user}) => {
     const[search,setSearch] = useState<boolean>(false)
 
-    useEffect(()=>{
-        axios.get('/api/user/getCurrentUser')
-        .then((response:AxiosResponse<User>)=>{
-            setUser(response.data)
-        })
-    },[])
     function handleSearchForm(event:any){
         event.preventDefault();
         const search = event.target.search.value;
-        console.log(search);
+        
         axios.get(`/api/user/searchUser?search=${search}`)
         .then(response=>{
             console.log(response);
